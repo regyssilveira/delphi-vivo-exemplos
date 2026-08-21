@@ -1,0 +1,6 @@
+dependencia;xe7_win32;delphi13_win32;delphi13_win64;evidencia;decisao
+Codigo proprio da fatia;sim;compila;compila;build MSBuild e testes;modernizar
+FireDAC;nao usado na fatia antiga;integrado;integrado;testes Firebird 5;adotar progressivamente
+Componente fiscal legado;sim;a confirmar;bloqueado;contrato e fornecedor;encapsular
+DLL bancaria;sim;sim;nao;documentacao do SDK;isolar em processo Win32
+Relatorios modificados;sim;a confirmar;a confirmar;diff e prova visual;separar patches

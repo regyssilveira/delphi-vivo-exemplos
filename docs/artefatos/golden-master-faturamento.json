@@ -1,0 +1,18 @@
+{
+  "cenario": "pedido aprovado com credito, estoque e fiscal disponíveis",
+  "entrada": {
+    "pedidoId": 1,
+    "usuarioId": 7,
+    "empresaId": 1,
+    "filialId": 1,
+    "instante": "2026-08-20T00:00:00-03:00"
+  },
+  "saidaObservada": {
+    "status": "sucesso",
+    "faturaId": 1000,
+    "pedidoStatus": "faturado",
+    "commits": 1,
+    "rollbacks": 0
+  },
+  "nota": "Comportamento fictício controlado. Mudanças exigem decisão funcional, não atualização automática do arquivo."
+}
