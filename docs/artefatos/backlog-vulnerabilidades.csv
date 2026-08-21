@@ -1,0 +1,5 @@
+item;risco;controle_atual;acao;responsavel;prazo;estado
+Credenciais locais de laboratorio;baixo;arquivo real ignorado;manter somente dados ficticios;Plataforma;continuo;controlado
+API key didatica;alto se usada em producao;bind local e aviso;substituir por identidade com validade e escopos;Seguranca;antes de producao;aberto
+DLL bancaria sem fonte;alto;processo Win32 isolado;adotar SDK suportado;Financeiro;12 meses;planejado
+Componente fiscal legado;alto;porta e testes de contrato;atualizar ou substituir;Fiscal;6 meses;planejado

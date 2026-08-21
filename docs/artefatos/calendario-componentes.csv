@@ -1,0 +1,5 @@
+componente;0_6_meses;7_12_meses;13_24_meses;criterio_encerramento
+Componente fiscal;inventario e contrato;piloto da versao suportada;retirar legado;100% das emissoes homologadas
+DLL bancaria;isolar processo Win32;pilotar novo SDK;retirar processo;conciliação sem divergencia
+Relatorios alterados;separar patches;homologar versao atual;eliminar package local;provas visuais aprovadas
+Camada de dados historica;conter;novas fatias em FireDAC;retirar onde sem consumidores;telemetria sem uso
