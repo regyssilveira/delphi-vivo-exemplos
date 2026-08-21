@@ -27,6 +27,14 @@ function Test-SchemaInitialized {
   return ($output -join ' ') -match '\b1\b'
 }
 
+function Test-MigrationApplied([int]$Version) {
+  $query = "set heading off; select count(*) from SCHEMA_VERSION where VERSION_NO = $Version;"
+  $output = $query |
+    & docker exec -i $container /opt/firebird/bin/isql -user horizonte -password horizonte_dev $database -q
+  if ($LASTEXITCODE -ne 0) { throw "Não foi possível consultar a migration $Version." }
+  return ($output -join ' ') -match '\b1\b'
+}
+
 switch ($Action) {
   'Start' {
     Invoke-Compose @('up', '-d', '--wait')
@@ -38,12 +46,18 @@ switch ($Action) {
     Invoke-Compose @('down', '--volumes')
   }
   'Migrate' {
-    if (Test-SchemaInitialized) {
-      Write-Host 'Schema já inicializado; nenhuma migration pendente.'
-    }
-    else {
+    if (-not (Test-SchemaInitialized)) {
       Invoke-Isql (Join-Path $PSScriptRoot '..\database\migrations\001_create_schema.sql')
     }
+    $migrationFiles = Get-ChildItem (Join-Path $PSScriptRoot '..\database\migrations') -Filter '*.sql' |
+      Sort-Object Name
+    foreach ($migrationFile in $migrationFiles) {
+      $version = [int]$migrationFile.BaseName.Split('_')[0]
+      if (-not (Test-MigrationApplied $version)) {
+        Invoke-Isql $migrationFile.FullName
+      }
+    }
+    Write-Host 'Todas as migrations foram aplicadas.'
   }
   'Seed' {
     Invoke-Isql (Join-Path $PSScriptRoot '..\database\seed\001_sample_data.sql')

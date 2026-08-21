@@ -8,16 +8,20 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$testExecutable = Join-Path $repoRoot "bin\$Platform\$Configuration\Horizonte.UnitTests.exe"
+$testExecutables = @(
+  (Join-Path $repoRoot "bin\$Platform\$Configuration\Horizonte.UnitTests.exe"),
+  (Join-Path $repoRoot "bin\$Platform\$Configuration\Horizonte.ContractTests.exe")
+)
 
-if (-not (Test-Path -LiteralPath $testExecutable)) {
+if ($testExecutables.Where({ -not (Test-Path -LiteralPath $_) }).Count -gt 0) {
   & (Join-Path $PSScriptRoot 'build.ps1') -Configuration $Configuration -Platform $Platform
 }
 
-& $testExecutable
-if ($LASTEXITCODE -ne 0) {
-  throw "Testes falharam com código $LASTEXITCODE."
+foreach ($testExecutable in $testExecutables) {
+  & $testExecutable
+  if ($LASTEXITCODE -ne 0) {
+    throw "Testes falharam em $testExecutable com código $LASTEXITCODE."
+  }
 }
 
 Write-Host "Testes aprovados: $Platform/$Configuration"
-

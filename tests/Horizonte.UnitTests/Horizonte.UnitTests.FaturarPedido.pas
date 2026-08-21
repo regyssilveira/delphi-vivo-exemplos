@@ -5,8 +5,10 @@ interface
 uses
   DUnitX.TestFramework,
   Horizonte.Application.FaturarPedido,
+  Horizonte.Application.Observability,
   Horizonte.Application.Ports,
-  Horizonte.Infrastructure.InMemory;
+  Horizonte.Infrastructure.InMemory,
+  Horizonte.Infrastructure.Logging;
 
 type
   [TestFixture]
@@ -15,11 +17,13 @@ type
     FRepositoryObject: TPedidoRepositoryInMemory;
     FEstoqueObject: TEstoqueServiceFixo;
     FUnitOfWorkObject: TUnitOfWorkInMemory;
+    FLoggerObject: TApplicationLoggerInMemory;
     FRepository: IPedidoRepository;
     FCredito: ICreditoService;
     FEstoque: IEstoqueService;
     FFiscal: IIntegracaoFiscal;
     FUnitOfWork: IUnitOfWork;
+    FLogger: IApplicationLogger;
     FService: TFaturarPedido;
     procedure RecriarServico;
   public
@@ -35,6 +39,8 @@ type
     procedure FalhaFiscal_DeveExecutarRollbackELiberarEstoque;
     [Test]
     procedure PedidoInexistente_DeveRetornarResultadoConhecido;
+    [Test]
+    procedure Faturamento_DevePropagarCorrelationIdNosEventos;
   end;
 
 implementation
@@ -56,6 +62,8 @@ begin
   FFiscal := TIntegracaoFiscalSimulada.Create(1000, False);
   FUnitOfWorkObject := TUnitOfWorkInMemory.Create;
   FUnitOfWork := FUnitOfWorkObject;
+  FLoggerObject := TApplicationLoggerInMemory.Create;
+  FLogger := FLoggerObject;
 
   LPedido := TPedido.Create(1, 10, 250, psAprovado);
   try
@@ -70,6 +78,7 @@ procedure TFaturarPedidoTests.TearDown;
 begin
   FreeAndNil(FService);
   FUnitOfWork := nil;
+  FLogger := nil;
   FFiscal := nil;
   FEstoque := nil;
   FCredito := nil;
@@ -84,7 +93,28 @@ begin
     FCredito,
     FEstoque,
     FFiscal,
-    FUnitOfWork);
+    FUnitOfWork,
+    FLogger);
+end;
+
+procedure TFaturarPedidoTests.Faturamento_DevePropagarCorrelationIdNosEventos;
+var
+  LCommand: TFaturarPedidoCommand;
+begin
+  LCommand.PedidoId := 1;
+  LCommand.UsuarioId := 7;
+  LCommand.EmpresaId := 1;
+  LCommand.FilialId := 1;
+  LCommand.CorrelationId := 'unit-test-correlation';
+  LCommand.Instante := EncodeDate(2026, 8, 20);
+
+  FService.Execute(LCommand);
+
+  Assert.AreEqual(2, FLoggerObject.Count);
+  Assert.AreEqual('pedido.faturamento.iniciado',
+    FLoggerObject.Entry(0).EventName);
+  Assert.AreEqual('unit-test-correlation',
+    FLoggerObject.Entry(1).CorrelationId);
 end;
 
 procedure TFaturarPedidoTests.PedidoAprovadoComCreditoEFiscalValido_DeveFaturar;

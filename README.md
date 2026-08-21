@@ -14,8 +14,12 @@ O exemplo demonstra modernização progressiva: a aplicação VCL continua útil
 - domínio e caso de uso de faturamento independentes da UI;
 - adaptadores em memória e FireDAC;
 - Firebird 5.0.3 descartável via Docker Compose;
-- 4 testes unitários DUnitX em Win32 e Win64;
+- 5 testes unitários DUnitX em Win32 e Win64;
+- 7 testes de contrato HTTP DUnitX, incluindo autenticação, escopo e correlação;
 - 2 testes de integração FireDAC/Firebird em Win32 e Win64;
+- API de consulta de pedidos e disponibilidade de estoque, descrita em OpenAPI;
+- logs estruturados JSON Lines com `correlationId` e sem dados sensíveis;
+- pacote auditável com hashes, smoke test, promoção e rollback;
 - scripts sem paths pessoais ou senhas de produção;
 - licença Apache 2.0.
 
@@ -35,10 +39,10 @@ cd delphi-vivo-exemplos
 .\build\prepare-firebird-client.ps1 -Platform Win64
 $env:HORIZONTE_FB_CLIENT=(Resolve-Path .\tools\firebird\Win64\fbclient.dll).Path
 .\build\integration-test.ps1 -Platform Win64
-.\build\package.ps1 -Platform Win64 -Version 0.1.0
+.\build\package.ps1 -Platform Win64 -Version 0.2.0
 ```
 
-Abra `src/Horizonte.Desktop/Horizonte.Desktop.dproj` para executar a aplicação VCL. O exemplo da tela usa adaptadores em memória para permanecer executável mesmo sem banco; a implementação FireDAC é exercitada pela suíte de integração. O host didático em `src/Horizonte.Api` executa o contrato de consulta na porta 8080; use `X-Api-Key: horizonte-local-only` somente no laboratório local.
+Abra `src/Horizonte.Desktop/Horizonte.Desktop.dproj` para executar a aplicação VCL. O exemplo da tela usa adaptadores em memória para permanecer executável mesmo sem banco; a implementação FireDAC é exercitada pela suíte de integração. O host didático em `src/Horizonte.Api` executa `GET /v1/pedidos/{id}` e `GET /v1/estoque/{produtoId}/disponibilidade` na porta 8080; use `X-Api-Key: horizonte-local-only` somente no laboratório local.
 
 ## Arquitetura da fatia
 
@@ -56,13 +60,13 @@ O sentido das dependências permite testar o comportamento sem abrir Forms ou co
 
 ## Navegação pelo livro
 
-O [guia dos 15 capítulos](docs/capitulos/README.md) relaciona problema, artefato e estado da evolução. As tags `capitulo-01` a `capitulo-15` registram marcos didáticos; a release da edição reúne o estado completo e validado.
+O [guia dos 15 capítulos](docs/capitulos/README.md) relaciona problema, artefato e estado da evolução. As tags `edicao-2026-capitulo-01` a `edicao-2026-capitulo-15` registram os marcos alinhados a esta edição; as tags curtas `capitulo-*` preservam a publicação v0.1 histórica.
 
 ## Estrutura
 
 ```text
 src/        domínio, aplicação, infraestrutura e desktop VCL
-tests/      testes unitários e de integração DUnitX
+tests/      testes unitários, de contrato HTTP e de integração DUnitX
 database/   migrations, seed e Docker Compose do Firebird 5
 build/      build, testes, banco e validação
 docs/       arquitetura, capítulos, IA e artefatos reutilizáveis
@@ -71,7 +75,7 @@ config/     modelo de configuração sem segredos
 
 ## Limites didáticos
 
-Emissão fiscal, crédito e estoque são simulados porque integrações comerciais e credenciais não podem ser redistribuídas. O caso de uso, a transação, os erros e as portas são completos. A API demonstra host, contrato e respostas; autenticação robusta, TLS, rate limiting e operação de backend em produção ficam fora do escopo desta obra.
+Emissão fiscal, crédito e estoque são simulados porque integrações comerciais e credenciais não podem ser redistribuídas. O caso de uso, a transação, os erros e as portas são completos. A chave local e os escopos da API existem para exercitar 401 e 403; autenticação de produção, TLS, rate limiting e gestão de identidades ficam fora do escopo desta obra.
 
 ## Segurança e contribuições
 

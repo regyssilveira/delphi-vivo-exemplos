@@ -1,0 +1,5 @@
+onda;perfil;plataforma;criterio_entrada;observacao;rollback
+laboratorio;dados ficticios;Win32 e Win64;build e testes verdes;continuo;reset do ambiente
+piloto;1 filial acompanhada;Win64;homologacao funcional e suporte treinado;72 horas;pacote anterior e banco compativel
+onda_2;clientes sem bloqueadores;Win64;piloto sem regressao critica;7 dias;retorno por grupo
+excecoes;DLL ou componente antigo;Win32;responsavel e prazo registrados;mensal;linha Win32 controlada

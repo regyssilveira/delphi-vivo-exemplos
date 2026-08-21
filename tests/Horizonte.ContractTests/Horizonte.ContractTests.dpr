@@ -1,4 +1,4 @@
-program HorizonteIntegrationTests;
+program HorizonteContractTests;
 
 {$APPTYPE CONSOLE}
 
@@ -7,11 +7,15 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  Horizonte.IntegrationTests.FireDAC in 'Horizonte.IntegrationTests.FireDAC.pas',
+  Horizonte.ContractTests.Api in 'Horizonte.ContractTests.Api.pas',
+  Horizonte.Api.Server in '..\..\src\Horizonte.Api\Horizonte.Api.Server.pas',
+  Horizonte.Application.ConsultarPedido in '..\..\src\Horizonte.Application\Horizonte.Application.ConsultarPedido.pas',
+  Horizonte.Application.Observability in '..\..\src\Horizonte.Application\Horizonte.Application.Observability.pas',
   Horizonte.Application.Ports in '..\..\src\Horizonte.Application\Horizonte.Application.Ports.pas',
   Horizonte.Domain.Pedido in '..\..\src\Horizonte.Domain\Horizonte.Domain.Pedido.pas',
   Horizonte.Domain.Types in '..\..\src\Horizonte.Domain\Horizonte.Domain.Types.pas',
-  Horizonte.Infrastructure.FireDAC in '..\..\src\Horizonte.Infrastructure\Horizonte.Infrastructure.FireDAC.pas';
+  Horizonte.Infrastructure.InMemory in '..\..\src\Horizonte.Infrastructure\Horizonte.Infrastructure.InMemory.pas',
+  Horizonte.Infrastructure.Logging in '..\..\src\Horizonte.Infrastructure\Horizonte.Infrastructure.Logging.pas';
 
 var
   LRunner: ITestRunner;
@@ -23,7 +27,7 @@ begin
   LRunner.UseRTTI := True;
   LRunner.AddLogger(TDUnitXConsoleLogger.Create(True));
   LRunner.AddLogger(TDUnitXXMLNUnitFileLogger.Create(
-    ExtractFilePath(ParamStr(0)) + 'Horizonte.IntegrationTests-results.xml'));
+    ExtractFilePath(ParamStr(0)) + 'Horizonte.ContractTests-results.xml'));
   LResults := LRunner.Execute;
   if not LResults.AllPassed then
     ExitCode := EXIT_ERRORS;

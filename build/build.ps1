@@ -8,25 +8,22 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$rsvars = 'C:\Program Files (x86)\Embarcadero\Studio\37.0\bin\rsvars.bat'
-$projects = @(
-  'src\Horizonte.Desktop\Horizonte.Desktop.dproj',
-  'src\Horizonte.Api\Horizonte.Api.dproj',
-  'tests\Horizonte.UnitTests\Horizonte.UnitTests.dproj'
-)
+$delphiRoot = $env:BDS
+if (-not $delphiRoot) {
+  $delphiRoot = 'C:\Program Files (x86)\Embarcadero\Studio\37.0'
+}
+$rsvars = Join-Path $delphiRoot 'bin\rsvars.bat'
+$project = Join-Path $repoRoot 'src\Horizonte.groupproj'
 
 if (-not (Test-Path -LiteralPath $rsvars)) {
   throw "Delphi 13 não localizado em: $rsvars"
 }
 
-foreach ($relativeProject in $projects) {
-  $project = Join-Path $repoRoot $relativeProject
-  $command = 'call "{0}" && msbuild "{1}" /t:Build /p:Config={2} /p:Platform={3} /verbosity:minimal' -f `
-    $rsvars, $project, $Configuration, $Platform
-  & cmd.exe /d /s /c $command
-  if ($LASTEXITCODE -ne 0) {
-    throw "Build falhou para $relativeProject com código $LASTEXITCODE."
-  }
+$command = 'call "{0}" && msbuild "{1}" /t:Build /p:Config={2} /p:Platform={3} /verbosity:minimal' -f `
+  $rsvars, $project, $Configuration, $Platform
+& cmd.exe /d /s /c $command
+if ($LASTEXITCODE -ne 0) {
+  throw "Build falhou para $project com código $LASTEXITCODE."
 }
 
 Write-Host "Build concluído: $Platform/$Configuration"

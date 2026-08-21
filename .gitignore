@@ -23,3 +23,4 @@ database/data/
 artifacts/
 test-results/
 tools/firebird/
+logs/

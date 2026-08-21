@@ -2,14 +2,19 @@ openapi: 3.0.3
 info:
   title: Horizonte Consulta API
   version: 1.0.0
-  description: Contrato didático de leitura; não expõe tabelas ou datasets.
+  description: Contrato didático de leitura dos capítulos 10 e 13.
+servers:
+  - url: http://127.0.0.1:8080
+    description: Laboratório local sem TLS
+security:
+  - localApiKey: []
 paths:
-  /api/v1/pedidos/{pedidoId}:
+  /v1/pedidos/{pedidoId}:
     get:
       operationId: consultarPedido
-      security:
-        - localApiKey: []
+      summary: Consulta um pedido no contexto autorizado
       parameters:
+        - $ref: '#/components/parameters/CorrelationId'
         - in: path
           name: pedidoId
           required: true
@@ -17,35 +22,117 @@ paths:
       responses:
         '200':
           description: Pedido encontrado
+          headers:
+            X-Correlation-ID: { $ref: '#/components/headers/CorrelationId' }
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Pedido'
-        '404':
-          description: Pedido não encontrado
+              schema: { $ref: '#/components/schemas/Pedido' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /v1/estoque/{produtoId}/disponibilidade:
+    get:
+      operationId: consultarDisponibilidade
+      summary: Consulta disponibilidade de produto na filial autorizada
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - in: path
+          name: produtoId
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Disponibilidade atual
+          headers:
+            X-Correlation-ID: { $ref: '#/components/headers/CorrelationId' }
           content:
-            application/problem+json:
-              schema: { $ref: '#/components/schemas/Problem' }
+            application/json:
+              schema: { $ref: '#/components/schemas/DisponibilidadeEstoque' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
 components:
   securitySchemes:
     localApiKey:
       type: apiKey
       in: header
       name: X-Api-Key
+      description: Simulação local; produção deve usar identidade, validade e escopos.
+  parameters:
+    CorrelationId:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema: { type: string, maxLength: 80 }
+  headers:
+    CorrelationId:
+      schema: { type: string }
+      description: Identificador propagado ou criado pela API.
   schemas:
     Pedido:
       type: object
-      required: [id, clienteId, valorTotal, status]
+      additionalProperties: false
+      required: [id, numero, situacao, cliente, valorTotal, atualizadoEm]
       properties:
         id: { type: integer }
-        clienteId: { type: integer }
-        valorTotal: { type: number, format: double }
-        status: { type: string, enum: [PENDENTE, APROVADO, FATURADO, CANCELADO] }
+        numero: { type: string, example: PV-2026-018452 }
+        situacao: { type: string, enum: [pendente, aprovado, faturado, cancelado] }
+        cliente:
+          type: object
+          additionalProperties: false
+          required: [id, nome]
+          properties:
+            id: { type: integer }
+            nome: { type: string }
+        valorTotal: { type: number, format: double, example: 4280.50 }
+        atualizadoEm: { type: string, format: date-time }
+    DisponibilidadeEstoque:
+      type: object
+      additionalProperties: false
+      required: [produtoId, filialId, quantidadeDisponivel, disponivel]
+      properties:
+        produtoId: { type: integer }
+        filialId: { type: integer }
+        quantidadeDisponivel: { type: number, format: double }
+        disponivel: { type: boolean }
     Problem:
       type: object
-      required: [type, title, status]
+      additionalProperties: false
+      required: [type, title, status, detail, instance, correlationId]
       properties:
         type: { type: string, format: uri-reference }
         title: { type: string }
         status: { type: integer }
-        correlationId: { type: string, format: uuid }
+        detail: { type: string }
+        instance: { type: string, format: uri-reference }
+        correlationId: { type: string }
+  responses:
+    BadRequest:
+      description: Parâmetro inválido
+      headers:
+        X-Correlation-ID: { $ref: '#/components/headers/CorrelationId' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unauthorized:
+      description: Credencial ausente ou inválida
+      headers:
+        X-Correlation-ID: { $ref: '#/components/headers/CorrelationId' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Forbidden:
+      description: Credencial válida sem escopo suficiente
+      headers:
+        X-Correlation-ID: { $ref: '#/components/headers/CorrelationId' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    NotFound:
+      description: Pedido ausente ou fora do contexto autorizado
+      headers:
+        X-Correlation-ID: { $ref: '#/components/headers/CorrelationId' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }

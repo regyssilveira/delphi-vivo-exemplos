@@ -92,6 +92,9 @@ var
 begin
   LCommand.PedidoId := 1;
   LCommand.UsuarioId := 7;
+  LCommand.EmpresaId := 1;
+  LCommand.FilialId := 1;
+  LCommand.CorrelationId := TGUID.NewGuid.ToString;
   LCommand.Instante := Now;
   LResult := FService.Execute(LCommand);
   memResultado.Lines.Add(Format(
@@ -100,4 +103,3 @@ begin
 end;
 
 end.
-
