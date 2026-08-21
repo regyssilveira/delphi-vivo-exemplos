@@ -1,0 +1,5 @@
+capacidade;impacto_1_5;probabilidade_1_5;detectabilidade_1_5;reversibilidade_1_5;frequencia_mudanca_1_5;prioridade;decisao
+Faturamento;5;4;2;2;5;alta;primeira fatia
+Estoque;5;3;3;2;4;alta;proteger junto ao faturamento
+Componente visual;2;3;5;5;2;baixa;adiar
+Integracao fiscal;5;4;2;2;4;alta;encapsular e simular

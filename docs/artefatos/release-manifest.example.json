@@ -1,0 +1,12 @@
+{
+  "produto": "ERP Horizonte",
+  "versao": "1.0.0",
+  "gitCommit": "SUBSTITUIR_NO_BUILD",
+  "delphi": "13 Florence / Studio 37.0",
+  "plataforma": "Win64",
+  "configuracao": "Release",
+  "schemaDatabase": 1,
+  "artefatos": [
+    { "arquivo": "Horizonte.Desktop.exe", "sha256": "GERADO_NA_PIPELINE" }
+  ]
+}

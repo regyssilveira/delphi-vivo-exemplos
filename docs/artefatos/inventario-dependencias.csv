@@ -1,0 +1,6 @@
+dependencia;categoria;versao_atual;arquitetura;fonte_disponivel;licenca;estrategia;responsavel
+RAD Studio;compilador;13 Florence;Win32/Win64;nao;comercial;manter suportado;Engenharia
+FireDAC;acesso a dados;integrado Studio 37.0;Win32/Win64;nao;comercial;usar adaptador;Engenharia
+Firebird;database;5.0.3;x86/x64;sim;IPL/IDPL;conteiner de referencia;Dados
+DUnitX;testes;integrado Studio 37.0;Win32/Win64;sim;Apache-2.0;manter na pipeline;Qualidade
+Componente fiscal legado;integracao;a inventariar;Win32;a inventariar;a inventariar;encapsular ou substituir;Fiscal

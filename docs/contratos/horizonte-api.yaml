@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  title: Horizonte Consulta API
+  version: 1.0.0
+  description: Contrato didático de leitura; não expõe tabelas ou datasets.
+paths:
+  /api/v1/pedidos/{pedidoId}:
+    get:
+      operationId: consultarPedido
+      security:
+        - localApiKey: []
+      parameters:
+        - in: path
+          name: pedidoId
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+        '404':
+          description: Pedido não encontrado
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+components:
+  securitySchemes:
+    localApiKey:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+  schemas:
+    Pedido:
+      type: object
+      required: [id, clienteId, valorTotal, status]
+      properties:
+        id: { type: integer }
+        clienteId: { type: integer }
+        valorTotal: { type: number, format: double }
+        status: { type: string, enum: [PENDENTE, APROVADO, FATURADO, CANCELADO] }
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string }
+        status: { type: integer }
+        correlationId: { type: string, format: uuid }

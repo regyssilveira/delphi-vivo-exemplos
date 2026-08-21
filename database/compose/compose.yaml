@@ -1,0 +1,22 @@
+services:
+  firebird:
+    image: firebirdsql/firebird:5.0.3
+    container_name: horizonte-firebird
+    restart: unless-stopped
+    environment:
+      FIREBIRD_ROOT_PASSWORD: ${FIREBIRD_ROOT_PASSWORD:-horizonte_root_dev}
+      FIREBIRD_DATABASE: horizonte.fdb
+      FIREBIRD_USER: horizonte
+      FIREBIRD_PASSWORD: ${FIREBIRD_PASSWORD:-horizonte_dev}
+    ports:
+      - "3051:3050"
+    volumes:
+      - horizonte_firebird_data:/var/lib/firebird/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/firebird/bin/isql -user horizonte -password $${FIREBIRD_PASSWORD:-horizonte_dev} localhost:/var/lib/firebird/data/horizonte.fdb -q >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  horizonte_firebird_data:

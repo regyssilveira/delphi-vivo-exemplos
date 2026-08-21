@@ -1,0 +1,33 @@
+name: Delphi validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: [self-hosted, Windows, X64, delphi-13]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and unit tests
+        shell: pwsh
+        run: .\build\validate.ps1
+      - name: Start Firebird and apply database
+        shell: pwsh
+        run: |
+          .\build\database.ps1 -Action Start
+          .\build\database.ps1 -Action Migrate
+          .\build\database.ps1 -Action Seed
+      - name: Prepare Firebird client and integration tests
+        shell: pwsh
+        run: |
+          .\build\prepare-firebird-client.ps1 -Platform Win64
+          $env:HORIZONTE_FB_CLIENT=(Resolve-Path .\tools\firebird\Win64\fbclient.dll).Path
+          .\build\integration-test.ps1 -Platform Win64
+      - name: Stop disposable database
+        if: always()
+        shell: pwsh
+        run: .\build\database.ps1 -Action Stop
