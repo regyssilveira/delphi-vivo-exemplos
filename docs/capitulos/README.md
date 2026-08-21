@@ -16,6 +16,6 @@
 | 12 | Produzir artefatos repetíveis | scripts `build/`, workflow, [manifesto](../artefatos/release-manifest.example.json), deploy e rollback |
 | 13 | Correlacionar operações e proteger logs | [Política de logs](../observabilidade/POLITICA_DE_LOGS.md), logger JSON Lines e [indicadores DORA](../artefatos/indicadores-dora.md) |
 | 14 | Tratar dependências, segredos e IA continuamente | [Política de IA](../ia/POLITICA_DE_USO.md), [ameaças](../artefatos/modelo-de-ameacas.md), [vulnerabilidades](../artefatos/backlog-vulnerabilidades.csv) e [calendário](../artefatos/calendario-componentes.csv) |
-| 15 | Transformar a primeira fatia em programa contínuo | [Roadmap 6/12/24 meses](../artefatos/roadmap-6-12-24.md) e [critérios de encerramento do XE7](../artefatos/criterios-encerramento-xe7.md) |
+| 15 | Transformar a primeira fatia em programa contínuo | [Roadmap 6/12/24 meses](../artefatos/roadmap-6-12-24.md), [placar verificável](../artefatos/placar-da-modernizacao.md) e [critérios de encerramento do XE7](../artefatos/criterios-encerramento-xe7.md) |
 
 As tags `edicao-2026-capitulo-*` são marcos de leitura, não quinze aplicações independentes. Capítulos que formam uma mesma mudança atômica podem apontar para o mesmo commit; a release da edição contém o estado completo. As tags curtas `capitulo-*` permanecem intocadas como histórico da v0.1.
