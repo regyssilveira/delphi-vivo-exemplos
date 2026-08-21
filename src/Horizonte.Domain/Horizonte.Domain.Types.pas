@@ -5,18 +5,46 @@ interface
 type
   TPedidoStatus = (psPendente, psAprovado, psFaturado, psCancelado);
 
+  TDisponibilidadeEstoque = record
+    ProdutoId: Integer;
+    FilialId: Integer;
+    QuantidadeDisponivel: Double;
+    Disponivel: Boolean;
+  end;
+
+  TPedidoConsultaDto = record
+    Id: Integer;
+    Numero: string;
+    Situacao: string;
+    ClienteId: Integer;
+    ClienteNome: string;
+    ValorTotal: Currency;
+    AtualizadoEm: TDateTime;
+  end;
+
+  TConsultarPedidoQuery = record
+    PedidoId: Integer;
+    EmpresaId: Integer;
+    FilialId: Integer;
+  end;
+
   TFaturamentoStatus = (
     fsSucesso,
     fsPedidoNaoEncontrado,
     fsPedidoNaoAprovado,
     fsCreditoRecusado,
     fsEstoqueIndisponivel,
-    fsFalhaFiscal
+    fsFalhaFiscal,
+    fsResultadoDesconhecido,
+    fsFalhaInterna
   );
 
   TFaturarPedidoCommand = record
     PedidoId: Integer;
     UsuarioId: Integer;
+    EmpresaId: Integer;
+    FilialId: Integer;
+    CorrelationId: string;
     Instante: TDateTime;
   end;
 
@@ -36,6 +64,8 @@ type
     function Sucesso: Boolean;
   end;
 
+  TFaturarPedidoResult = TFaturamentoResult;
+
 implementation
 
 class function TFaturamentoResult.Create(
@@ -54,4 +84,3 @@ begin
 end;
 
 end.
-
