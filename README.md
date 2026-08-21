@@ -62,6 +62,8 @@ O sentido das dependências permite testar o comportamento sem abrir Forms ou co
 
 O [guia dos 15 capítulos](docs/capitulos/README.md) relaciona problema, artefato e estado da evolução. As tags `edicao-2026-capitulo-01` a `edicao-2026-capitulo-15` registram os marcos alinhados a esta edição; as tags curtas `capitulo-*` preservam a publicação v0.1 histórica.
 
+O ERP descrito no livro possui alcance maior que o código distribuído. Este repositório implementa uma fatia vertical representativa de Vendas/Faturamento, do desktop à entrega. O [placar da modernização](docs/artefatos/placar-da-modernizacao.md) distingue fatos reproduzíveis, metas e indicadores que dependem de uma operação real.
+
 ## Estrutura
 
 ```text
