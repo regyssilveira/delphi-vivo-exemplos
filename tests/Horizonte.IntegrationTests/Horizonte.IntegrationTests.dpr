@@ -22,7 +22,8 @@ begin
   LRunner := TDUnitX.CreateRunner;
   LRunner.UseRTTI := True;
   LRunner.AddLogger(TDUnitXConsoleLogger.Create(True));
-  LRunner.AddLogger(TDUnitXXMLNUnitFileLogger.Create);
+  LRunner.AddLogger(TDUnitXXMLNUnitFileLogger.Create(
+    ExtractFilePath(ParamStr(0)) + 'Horizonte.IntegrationTests-results.xml'));
   LResults := LRunner.Execute;
   if not LResults.AllPassed then
     ExitCode := EXIT_ERRORS;

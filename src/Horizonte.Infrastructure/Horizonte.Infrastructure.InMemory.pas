@@ -31,7 +31,8 @@ type
       const AValor: Currency): Boolean;
   end;
 
-  TEstoqueServiceFixo = class(TInterfacedObject, IEstoqueService)
+  TEstoqueServiceFixo = class(TInterfacedObject, IEstoqueService,
+    IEstoqueApplication)
   private
     FDisponivel: Boolean;
     FReservas: TList<Integer>;
@@ -41,6 +42,10 @@ type
     function Reservar(const APedidoId: Integer): Boolean;
     procedure Liberar(const APedidoId: Integer);
     function EstaReservado(const APedidoId: Integer): Boolean;
+    function ConsultarDisponibilidade(
+      const AProdutoId: Integer;
+      const AFilialId: Integer): TDisponibilidadeEstoque;
+    procedure ReservarPedido(const APedidoId: Integer);
   end;
 
   TIntegracaoFiscalSimulada = class(TInterfacedObject, IIntegracaoFiscal)
@@ -96,7 +101,11 @@ begin
       APedido.Id,
       APedido.ClienteId,
       APedido.ValorTotal,
-      psAprovado);
+      psAprovado,
+      APedido.EmpresaId,
+      APedido.FilialId,
+      APedido.Numero,
+      APedido.AtualizadoEm);
     Result.MarcarComoFaturado(APedido.FaturaId);
   end
   else
@@ -104,7 +113,11 @@ begin
       APedido.Id,
       APedido.ClienteId,
       APedido.ValorTotal,
-      APedido.Status);
+      APedido.Status,
+      APedido.EmpresaId,
+      APedido.FilialId,
+      APedido.Numero,
+      APedido.AtualizadoEm);
 end;
 
 procedure TPedidoRepositoryInMemory.Adicionar(const APedido: TPedido);
@@ -169,6 +182,25 @@ end;
 function TEstoqueServiceFixo.EstaReservado(const APedidoId: Integer): Boolean;
 begin
   Result := FReservas.Contains(APedidoId);
+end;
+
+function TEstoqueServiceFixo.ConsultarDisponibilidade(
+  const AProdutoId: Integer;
+  const AFilialId: Integer): TDisponibilidadeEstoque;
+begin
+  Result.ProdutoId := AProdutoId;
+  Result.FilialId := AFilialId;
+  if FDisponivel then
+    Result.QuantidadeDisponivel := 42
+  else
+    Result.QuantidadeDisponivel := 0;
+  Result.Disponivel := FDisponivel;
+end;
+
+procedure TEstoqueServiceFixo.ReservarPedido(const APedidoId: Integer);
+begin
+  if not Reservar(APedidoId) then
+    raise EInvalidOpException.Create('Estoque indisponível para o pedido.');
 end;
 
 constructor TIntegracaoFiscalSimulada.Create(

@@ -115,7 +115,8 @@ begin
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'select ID, CLIENTE_ID, VALOR_TOTAL, STATUS, FATURA_ID ' +
+      'select ID, CLIENTE_ID, VALOR_TOTAL, STATUS, FATURA_ID, ' +
+      'EMPRESA_ID, FILIAL_ID, NUMERO, ATUALIZADO_EM ' +
       'from PEDIDO where ID = :PEDIDO_ID';
     LQuery.ParamByName('PEDIDO_ID').AsInteger := APedidoId;
     LQuery.Open;
@@ -130,7 +131,11 @@ begin
       LQuery.FieldByName('ID').AsInteger,
       LQuery.FieldByName('CLIENTE_ID').AsInteger,
       LQuery.FieldByName('VALOR_TOTAL').AsCurrency,
-      LInitialStatus);
+      LInitialStatus,
+      LQuery.FieldByName('EMPRESA_ID').AsInteger,
+      LQuery.FieldByName('FILIAL_ID').AsInteger,
+      LQuery.FieldByName('NUMERO').AsString,
+      LQuery.FieldByName('ATUALIZADO_EM').AsDateTime);
     if LStatus = psFaturado then
       Result.MarcarComoFaturado(LQuery.FieldByName('FATURA_ID').AsInteger);
   finally
@@ -146,17 +151,21 @@ begin
   try
     LCommand.Connection := FConnection;
     LCommand.SQL.Text :=
-      'update PEDIDO set STATUS = :STATUS, FATURA_ID = :FATURA_ID ' +
-      'where ID = :PEDIDO_ID';
+      'update PEDIDO set STATUS = :STATUS, FATURA_ID = :FATURA_ID, ' +
+      'ATUALIZADO_EM = :ATUALIZADO_EM ' +
+      'where ID = :PEDIDO_ID and STATUS = :STATUS_ANTERIOR';
     LCommand.ParamByName('STATUS').AsString := StatusToDatabase(APedido.Status);
     if APedido.FaturaId > 0 then
       LCommand.ParamByName('FATURA_ID').AsInteger := APedido.FaturaId
     else
       LCommand.ParamByName('FATURA_ID').Clear;
     LCommand.ParamByName('PEDIDO_ID').AsInteger := APedido.Id;
+    LCommand.ParamByName('STATUS_ANTERIOR').AsString := 'APROVADO';
+    LCommand.ParamByName('ATUALIZADO_EM').AsDateTime := APedido.AtualizadoEm;
     LCommand.ExecSQL;
     if LCommand.RowsAffected <> 1 then
-      raise EInvalidOpException.Create('O pedido não foi atualizado.');
+      raise EInvalidOpException.Create(
+        'O pedido foi alterado por outra operação e não pôde ser atualizado.');
   finally
     LCommand.Free;
   end;
