@@ -19,6 +19,8 @@ O exemplo demonstra modernização progressiva: a aplicação VCL continua útil
 - scripts sem paths pessoais ou senhas de produção;
 - licença Apache 2.0.
 
+O workflow é manual porque o compilador Delphi exige um runner Windows licenciado e configurado com o rótulo `delphi-13`. Isso evita prometer uma build em runners públicos que não possuem o toolchain.
+
 ## Comece em cinco minutos
 
 Pré-requisitos: Windows, RAD Studio/Delphi 13 Florence com suporte Win32 e Win64, PowerShell 7 e Docker Desktop.
