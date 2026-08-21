@@ -1,0 +1,20 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup><ProjectGuid>{D4808730-8DAA-4F9C-BD9D-19F32D91A006}</ProjectGuid></PropertyGroup>
+  <ItemGroup>
+    <Projects Include="Horizonte.Desktop\Horizonte.Desktop.dproj"><Dependencies/></Projects>
+    <Projects Include="Horizonte.Api\Horizonte.Api.dproj"><Dependencies/></Projects>
+    <Projects Include="..\tests\Horizonte.UnitTests\Horizonte.UnitTests.dproj"><Dependencies/></Projects>
+    <Projects Include="..\tests\Horizonte.ContractTests\Horizonte.ContractTests.dproj"><Dependencies/></Projects>
+    <Projects Include="..\tests\Horizonte.IntegrationTests\Horizonte.IntegrationTests.dproj"><Dependencies/></Projects>
+  </ItemGroup>
+  <ProjectExtensions><Borland.Personality>Default.Personality.12</Borland.Personality><Borland.ProjectType/><BorlandProject><Default.Personality/></BorlandProject></ProjectExtensions>
+  <Target Name="Desktop"><MSBuild Projects="Horizonte.Desktop\Horizonte.Desktop.dproj"/></Target>
+  <Target Name="Api"><MSBuild Projects="Horizonte.Api\Horizonte.Api.dproj"/></Target>
+  <Target Name="UnitTests"><MSBuild Projects="..\tests\Horizonte.UnitTests\Horizonte.UnitTests.dproj"/></Target>
+  <Target Name="ContractTests"><MSBuild Projects="..\tests\Horizonte.ContractTests\Horizonte.ContractTests.dproj"/></Target>
+  <Target Name="IntegrationTests"><MSBuild Projects="..\tests\Horizonte.IntegrationTests\Horizonte.IntegrationTests.dproj"/></Target>
+  <Target Name="Build"><CallTarget Targets="Desktop;Api;UnitTests;ContractTests;IntegrationTests"/></Target>
+  <Target Name="Clean"><MSBuild Projects="@(Projects)" Targets="Clean"/></Target>
+  <Target Name="Make"><MSBuild Projects="@(Projects)" Targets="Make"/></Target>
+  <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
