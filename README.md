@@ -60,7 +60,7 @@ O sentido das dependências permite testar o comportamento sem abrir Forms ou co
 
 ## Navegação pelo livro
 
-O [guia dos 15 capítulos](docs/capitulos/README.md) relaciona problema, artefato e estado da evolução. As tags `capitulo-01` a `capitulo-15` registram marcos didáticos; a release da edição reúne o estado completo e validado.
+O [guia dos 15 capítulos](docs/capitulos/README.md) relaciona problema, artefato e estado da evolução. As tags `edicao-2026-capitulo-01` a `edicao-2026-capitulo-15` registram os marcos alinhados a esta edição; as tags curtas `capitulo-*` preservam a publicação v0.1 histórica.
 
 ## Estrutura
 
